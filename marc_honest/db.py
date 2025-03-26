@@ -10,7 +10,7 @@ def get_marc_honest_url() -> str:
     try:
         os.environ["MARC_HONEST_URL"]
     except KeyError:
-        #print("MARC_HONEST_URL environment variable not set, using in-memory db")
+        # print("MARC_HONEST_URL environment variable not set, using in-memory db")
         return "sqlite:///:memory:"
     return os.environ["MARC_HONEST_URL"]
 
@@ -61,7 +61,9 @@ def get_session(database_url: str = get_marc_honest_url()) -> Session:
 
 def init(argv: list[str]):
     parser = argparse.ArgumentParser(description="Initialize the database.")
-    parser.add_argument("--db_url", default=get_marc_honest_url(), help="The database URL.")
+    parser.add_argument(
+        "--db_url", default=get_marc_honest_url(), help="The database URL."
+    )
     args = parser.parse_args(argv)
 
     create_database(args.db_url)

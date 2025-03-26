@@ -1,0 +1,27 @@
+[project]
+name = "marc_honest"
+description = "A Python library for defining and honest brokering interactions with the mARC MRN db"
+dynamic = ["version"]
+dependencies = [
+    "SQLAlchemy==2.0.39",
+    "pandas==2.2.3",
+    "openpyxl==3.1.5"
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pytest",
+    "pytest-cov",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "marc_honest.__version__"}
+
+[project.scripts]
+marc_honest = "marc_honest.cli:main"

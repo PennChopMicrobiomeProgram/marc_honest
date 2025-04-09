@@ -106,7 +106,7 @@ def main(argv: list[str]):
     output_fp = Path(args.output)
 
     if not args.output:
-        output_fp = input_fp.parent / f"{input_fp.name}_anonymized.tsv"
+        output_fp = input_fp.parent / f"{input_fp.stem}_anonymized.tsv"
     else:
         output_fp = Path(args.output)
 

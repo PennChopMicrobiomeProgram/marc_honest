@@ -1,4 +1,3 @@
-import argparse
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
@@ -57,14 +56,3 @@ def get_session(database_url: str = get_marc_honest_url()) -> Session:
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
-
-
-def init(argv: list[str]):
-    parser = argparse.ArgumentParser(description="Initialize the database.")
-    parser.add_argument(
-        "--db_url", default=get_marc_honest_url(), help="The database URL."
-    )
-    args = parser.parse_args(argv)
-
-    create_database(args.db_url)
-    print(f"Database initialized at {args.db_url}")

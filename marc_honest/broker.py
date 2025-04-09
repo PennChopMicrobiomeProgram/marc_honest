@@ -100,9 +100,6 @@ def main(argv: list[str]):
     parser = argparse.ArgumentParser(description="Honest broker for mARC.")
     parser.add_argument("input", help="The input file.")
     parser.add_argument("--output", default="", help="The output file.")
-    parser.add_argument(
-        "--db_url", default=get_marc_honest_url(), help="The database URL."
-    )
     args = parser.parse_args(argv)
 
     input_fp = Path(args.input)
@@ -113,7 +110,7 @@ def main(argv: list[str]):
     else:
         output_fp = Path(args.output)
 
-    session = get_session(args.db_url)
+    session = get_session()
 
     df = ingest(input_fp)
     anonymized_df = load(df, session)

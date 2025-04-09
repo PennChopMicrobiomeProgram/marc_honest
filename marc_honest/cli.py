@@ -2,8 +2,8 @@ import argparse
 import sys
 from marc_honest import __version__
 from marc_honest.broker import main as Broker
-from marc_honest.db import init as Init
-from marc_honest.mock import main as Mock
+from marc_honest.db import create_database as Init
+from marc_honest.mock import fill_mock_db as Mock
 
 
 def main():
@@ -37,9 +37,9 @@ def main():
     if args.command == "broker":
         Broker(remaining)
     elif args.command == "init":
-        Init(remaining)
+        Init()
     elif args.command == "mock_db":
-        Mock(remaining)
+        Mock()
     else:
         parser.print_help()
         sys.stderr.write("Unrecognized command.\n")

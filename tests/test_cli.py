@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import pytest
 import subprocess as sp
@@ -7,13 +8,14 @@ from typing import Generator
 
 
 @pytest.fixture
-def db() -> Generator[str, None, None]:
+def db(monkeypatch) -> Generator[str, None, None]:
     """
     Pytest fixture to set up an in-memory SQLite database for testing.
     """
     db_fp = Path(__file__).parent / "test.db"
     db_url = f"sqlite:///{db_fp.resolve()}"
-    sp.run(["marc_honest", "init", "--db_url", db_url], check=True)
+    monkeypatch.setenv("MARC_HONEST_URL", db_url)
+    sp.run(["marc_honest", "init"], check=True)
 
     yield db_url
 
@@ -36,8 +38,6 @@ def test_main(db):
             str(Path(__file__).parent / "test.xlsx"),
             "--output",
             str(output_fp),
-            "--db_url",
-            db,
         ],
         check=True,
     )
@@ -54,8 +54,6 @@ def test_main(db):
             str(Path(__file__).parent / "test.xlsx"),
             "--output",
             str(output_fp),
-            "--db_url",
-            db,
         ],
         check=True,
     )

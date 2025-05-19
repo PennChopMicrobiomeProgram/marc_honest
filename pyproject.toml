@@ -3,7 +3,7 @@ name = "marc_honest"
 description = "A Python library for defining and honest brokering interactions with the mARC MRN db"
 dynamic = ["version"]
 dependencies = [
-    "SQLAlchemy==2.0.39",
+    "SQLAlchemy==2.0.41",
     "pandas==2.2.3",
     "openpyxl==3.1.5"
 ]

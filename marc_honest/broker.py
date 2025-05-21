@@ -56,9 +56,6 @@ def ingest(input_fp: Path) -> pd.DataFrame:
     # Drop redundant column
     df_merged.drop(columns=["Box Type"], inplace=True)
 
-    # Remove rows where Tube Barcode is NaN (i.e., no actual tube in that slot)
-    df_merged = df_merged.dropna(subset=["Tube Barcode"]).reset_index(drop=True)
-
     return df_merged
 
 

@@ -89,7 +89,12 @@ def load(df: pd.DataFrame, session: Session) -> pd.DataFrame:
         df.loc[i, "Specimen ID"] = specimen_id
 
     session.commit()
+
+    # Anonymize the MRN and Specimen Barcode columns
     df.drop(columns=["MRN", "Specimen Barcode"], inplace=True)
+    # Drop any rows where the Tube Barcode is NaN
+    df.dropna(subset=["Tube Barcode"], inplace=True)
+
     return df
 
 

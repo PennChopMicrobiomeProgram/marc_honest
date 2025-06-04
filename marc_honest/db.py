@@ -2,16 +2,11 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Connection
 from sqlalchemy.orm import sessionmaker, Session
-from marc_honest.models import Base
+from marc_honest.models import Base, Specimen, Subject
 
 
 def get_marc_honest_url() -> str:
-    try:
-        os.environ["MARC_HONEST_URL"]
-    except KeyError:
-        # print("MARC_HONEST_URL environment variable not set, using in-memory db")
-        return "sqlite:///:memory:"
-    return os.environ["MARC_HONEST_URL"]
+    return os.environ.get("MARC_HONEST_URL", "sqlite:///:memory:")
 
 
 def create_database(database_url: str = get_marc_honest_url()):
@@ -55,4 +50,16 @@ def get_session(database_url: str = get_marc_honest_url()) -> Session:
     engine = create_engine(database_url)
     Session = sessionmaker(bind=engine)
     session = Session()
+
+    # Test session by executing a simple query
+    try:
+        session.query(Subject).first()
+        session.query(Specimen).first()
+    except Exception as e:
+        raise RuntimeError(
+            "\nmarc_honest failed to connect to database: \n```"
+            + str(e)
+            + f"\n```\nDid you remember to set MARC_HONEST_URL: {os.environ.get('MARC_HONEST_URL')}?"
+        )
+
     return session

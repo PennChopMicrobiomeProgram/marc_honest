@@ -1,4 +1,5 @@
 import argparse
+import os
 import pandas as pd
 from pathlib import Path
 from marc_honest.db import get_marc_honest_url, get_session
@@ -89,8 +90,24 @@ def load(df: pd.DataFrame, session: Session) -> pd.DataFrame:
         df.loc[i, "Specimen ID"] = specimen_id
 
     session.commit()
+
+    # Anonymize the MRN and Specimen Barcode columns
     df.drop(columns=["MRN", "Specimen Barcode"], inplace=True)
-    return df
+    # Drop any rows where the Tube Barcode is NaN
+    cleaned_df = df.dropna(subset=["Tube Barcode"])
+    # Add back in blanks for any samples that have been completely removed
+    for sample in set(df["SampleID"].unique().tolist()) - set(
+        cleaned_df["SampleID"].unique().tolist()
+    ):
+        cleaned_df = pd.concat(
+            [
+                cleaned_df,
+                df[df["SampleID"] == sample].head(1),
+            ],
+            ignore_index=True,
+        )
+
+    return cleaned_df
 
 
 def main(argv: list[str]):
@@ -108,6 +125,16 @@ def main(argv: list[str]):
         output_fp = Path(args.output)
 
     session = get_session()
+
+    try:
+        session.query(Subject).first()
+        session.query(Specimen).first()
+    except Exception as e:
+        raise RuntimeError(
+            "\nmarc_honest failed to connect to database: \n```"
+            + str(e)
+            + f"\n```\nDid you remember to set MARC_HONEST_URL: {os.environ.get('MARC_HONEST_URL')}?"
+        )
 
     df = ingest(input_fp)
     anonymized_df = load(df, session)

@@ -63,3 +63,24 @@ def test_main(db):
     assert df.equals(df2)
 
     output_fp.unlink()
+
+
+def test_main_with_missing(db):
+    output_fp = Path(__file__).parent / "test_missing.tsv"
+    sp.run(
+        [
+            "marc_honest",
+            "broker",
+            str(Path(__file__).parent / "test_missing.xlsx"),
+            "--output",
+            str(output_fp),
+        ],
+        check=True,
+    )
+
+    assert output_fp.exists()
+    df = pd.read_csv(output_fp, sep="\t")
+    assert df["Subject ID"].notna().all()
+    assert df["Specimen ID"].notna().all()
+
+    output_fp.unlink()

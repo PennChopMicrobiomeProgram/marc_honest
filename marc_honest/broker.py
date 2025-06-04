@@ -125,6 +125,16 @@ def main(argv: list[str]):
 
     session = get_session()
 
+    try:
+        session.query(Subject).first()
+        session.query(Specimen).first()
+    except Exception as e:
+        raise RuntimeError(
+            "\nmarc_honest failed to connect to database: \n```"
+            + str(e)
+            + f"\n```\nDid you remember to set MARC_HONEST_URL: {os.environ.get('MARC_HONEST_URL')}?"
+        )
+
     df = ingest(input_fp)
     anonymized_df = load(df, session)
     anonymized_df.to_csv(output_fp, sep="\t", index=False)

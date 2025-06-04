@@ -51,15 +51,4 @@ def get_session(database_url: str = get_marc_honest_url()) -> Session:
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Test session by executing a simple query
-    try:
-        session.query(Subject).first()
-        session.query(Specimen).first()
-    except Exception as e:
-        raise RuntimeError(
-            "\nmarc_honest failed to connect to database: \n```"
-            + str(e)
-            + f"\n```\nDid you remember to set MARC_HONEST_URL: {os.environ.get('MARC_HONEST_URL')}?"
-        )
-
     return session

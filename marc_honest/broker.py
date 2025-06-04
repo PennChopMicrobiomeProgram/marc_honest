@@ -93,9 +93,20 @@ def load(df: pd.DataFrame, session: Session) -> pd.DataFrame:
     # Anonymize the MRN and Specimen Barcode columns
     df.drop(columns=["MRN", "Specimen Barcode"], inplace=True)
     # Drop any rows where the Tube Barcode is NaN
-    df.dropna(subset=["Tube Barcode"], inplace=True)
+    cleaned_df = df.dropna(subset=["Tube Barcode"])
+    # Add back in blanks for any samples that have been completely removed
+    for sample in set(df["SampleID"].unique().tolist()) - set(
+        cleaned_df["SampleID"].unique().tolist()
+    ):
+        cleaned_df = pd.concat(
+            [
+                cleaned_df,
+                df[df["SampleID"] == sample].head(1),
+            ],
+            ignore_index=True,
+        )
 
-    return df
+    return cleaned_df
 
 
 def main(argv: list[str]):
